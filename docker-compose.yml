@@ -18,6 +18,7 @@ services:
       - traefik.http.routers.traefik.tls=true
       - traefik.http.routers.traefik.service=api@internal
       - traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$aUlPDYOb$$tDDau3d3zvz0op6NrMo6C1  # U/P: admin:123456
+      - traefik.http.middlewares.auth.basicauth.removeheader=true
       - traefik.http.routers.traefik.middlewares=auth
   nexus:
     restart: always
