@@ -1,0 +1,50 @@
+entryPoints:
+  http:
+    address: :80
+    http:
+      redirections:
+        entryPoint:
+          to: https
+          scheme: https
+          permanent: true
+  https:
+    address: :443
+
+providers:
+  providersThrottleDuration: 2s
+  docker:
+    endpoint: unix:///var/run/docker.sock
+    watch: true
+    network: docker
+    exposedByDefault: false
+  file:
+    filename: /traefik.yml
+    watch: true
+
+api:
+  dashboard: true
+  insecure: false
+  debug: false
+
+log:
+  level: INFO
+accessLog: true
+
+tls:
+  certificates:
+    - certFile: /certs/treesir-pub.crt
+      keyFile: /certs/treesir-pub.key
+  certificates:
+    - certFile: /certs/idocker-io.crt
+      keyFile: /certs/idocker-io.key
+  options:
+    default:
+      minVersion: VersionTLS12
+      cipherSuites:
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_RSA_WITH_AES_256_GCM_SHA384
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /certs/treesir-pub.crt
+        keyFile: /certs/treesir-pub.key

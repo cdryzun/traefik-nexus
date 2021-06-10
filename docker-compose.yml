@@ -1,0 +1,66 @@
+version: "3"
+services:
+  traefik:
+    restart: always
+    image: traefik:v2.4.8
+    container_name: traefik
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/certs:ro
+      - ./traefik/traefik.yml:/traefik.yml:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik.entrypoints=http,https
+      - traefik.http.routers.traefik.rule=Host(`traefik.treesir.pub`)
+      - traefik.http.routers.traefik.tls=true
+      - traefik.http.routers.traefik.service=api@internal
+  nexus:
+    restart: always
+    image: sonatype/nexus3:3.30.1
+    container_name: nexus3
+    privileged: true
+    environment:
+      - INSTALL4J_ADD_VM_PARAMS=-Xms4g -Xmx4g -XX:MaxDirectMemorySize=6g
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./nexus-data:/nexus-data 
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.1.entrypoints=http,https
+      - traefik.http.routers.1.rule=Host(`mirror.treesir.pub`) && PathPrefix(`/`)
+      - traefik.http.routers.1.tls=true
+      - traefik.http.routers.1.service=one
+      - traefik.http.services.one.loadbalancer.server.port=8081
+      - traefik.http.routers.2.entrypoints=http,https
+      - traefik.http.routers.2.rule=Host(`idocker.io`) || (Host(`idocker.io`) && Method(`GET`)) 
+      - traefik.http.routers.2.tls=true
+      - traefik.http.routers.2.service=two
+      - traefik.http.services.two.loadbalancer.server.port=8082
+      - traefik.http.routers.3.entrypoints=http,https
+      - traefik.http.routers.3.rule=(Host(`idocker.io`) && Path(`/v1/search`)) || (Host(`idocker.io`) && Method(`PUT`,`HEAD`,`POST`,`PATCH`))
+      - traefik.http.routers.3.priority=100
+      - traefik.http.routers.3.tls=true
+      - traefik.http.routers.3.service=three
+      - traefik.http.services.three.loadbalancer.server.port=8086
+      - traefik.http.routers.4.rule=Host(`dev.idocker.io`) && PathPrefix(`/`)
+      - traefik.http.routers.4.tls=true
+      - traefik.http.routers.4.service=four
+      - traefik.http.services.four.loadbalancer.server.port=8083
+      - traefik.http.routers.5.rule=Host(`dev.idocker.io`) && PathPrefix(`/`)
+      - traefik.http.routers.5.tls=true
+      - traefik.http.routers.5.service=five
+      - traefik.http.services.five.loadbalancer.server.port=8084
+      - traefik.http.routers.6.rule=Host(`prod.idocker.io`) && PathPrefix(`/`)
+      - traefik.http.routers.6.tls=true
+      - traefik.http.routers.6.service=six
+      - traefik.http.services.six.loadbalancer.server.port=8085
+networks:
+  default:
+    external:
+      name: docker
+
+
+# sz -y $(mkcert -CAROOT)/rootCA.pem
