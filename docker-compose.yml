@@ -49,7 +49,7 @@ services:
       - traefik.http.routers.4.tls=true
       - traefik.http.routers.4.service=four
       - traefik.http.services.four.loadbalancer.server.port=8083
-      - traefik.http.routers.5.rule=Host(`dev.idocker.io`) && PathPrefix(`/`)
+      - traefik.http.routers.5.rule=Host(`qa.idocker.io`) && PathPrefix(`/`)
       - traefik.http.routers.5.tls=true
       - traefik.http.routers.5.service=five
       - traefik.http.services.five.loadbalancer.server.port=8084
