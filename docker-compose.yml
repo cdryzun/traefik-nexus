@@ -17,6 +17,7 @@ services:
       - traefik.http.routers.traefik.rule=Host(`traefik.treesir.pub`)
       - traefik.http.routers.traefik.tls=true
       - traefik.http.routers.traefik.service=api@internal
+      - traefik.http.middlewares.traefik.basicauth.users=admin:YWRtaW46JGFwcjEkYVVsUERZT2IkdEREYXUzZDN6dnowb3A2TnJNbzZDMQoK  # U/P: admin:123456
   nexus:
     restart: always
     image: sonatype/nexus3:3.30.1
