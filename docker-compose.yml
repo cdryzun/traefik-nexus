@@ -18,8 +18,9 @@ services:
       - traefik.http.routers.traefik.tls=true
       - traefik.http.routers.traefik.service=api@internal
       - traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$aUlPDYOb$$tDDau3d3zvz0op6NrMo6C1  # U/P: admin:123456
+      - traefik.http.middlewares.compress.compress=true
       - traefik.http.middlewares.auth.basicauth.removeheader=true
-      - traefik.http.routers.traefik.middlewares=auth
+      - traefik.http.routers.traefik.middlewares=auth,compress
   nexus:
     restart: always
     image: sonatype/nexus3:3.30.1
@@ -36,6 +37,7 @@ services:
       - traefik.http.routers.1.rule=Host(`mirror.treesir.pub`) && PathPrefix(`/`)
       - traefik.http.routers.1.tls=true
       - traefik.http.routers.1.service=one
+      - traefik.http.routers.1.middlewares=compress
       - traefik.http.services.one.loadbalancer.server.port=8081
       - traefik.http.routers.2.entrypoints=http,https
       - traefik.http.routers.2.rule=Host(`idocker.io`) || (Host(`idocker.io`) && Method(`GET`)) 
