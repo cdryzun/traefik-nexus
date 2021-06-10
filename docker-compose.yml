@@ -13,12 +13,12 @@ services:
       - ./traefik/traefik.yml:/traefik.yml:ro
     labels:
       - traefik.enable=true
-      - traefik.http.routers.traefik.entrypoints=http,https
-      - traefik.http.routers.traefik.rule=Host(`traefik.treesir.pub`)
-      - traefik.http.routers.traefik.tls=true
-      - traefik.http.routers.traefik.service=api@internal
+      - traefik.http.routers.traefik.entrypoints="http,https"
+      - traefik.http.routers.traefik.rule="Host(`traefik.treesir.pub`)"
+      - traefik.http.routers.traefik.tls="true"
+      - traefik.http.routers.traefik.service="api@internal"
       - traefik.http.middlewares.auth.basicauth.users="admin:$apr1$aUlPDYOb$tDDau3d3zvz0op6NrMo6C1"  # U/P: admin:123456
-      - traefik.http.routers.traefik.middlewares=auth
+      - traefik.http.routers.traefik.middlewares="auth"
   nexus:
     restart: always
     image: sonatype/nexus3:3.30.1
